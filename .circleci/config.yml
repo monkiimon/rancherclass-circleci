@@ -22,8 +22,8 @@ jobs:
       - run:
           name: Build and push docker images
           command: cp Dockerfile.production Dockerfile
-            docker build -t lanjakorndev/example-nodejs-express:latest .
-            docker build -t lanjakorndev/example-nodejs-express:${CIRCLE_SHA1} .
-            docker push lanjakorndev/example-nodejs-express:latest .
-            docker push lanjakorndev/example-nodejs-express:${CIRCLE_SHA1}
+            docker build -t lanjakorndev/example-nodejs-circle:latest .
+            docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1} .
+            docker push lanjakorndev/example-nodejs-circle:latest .
+            docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
       - run: echo Done
