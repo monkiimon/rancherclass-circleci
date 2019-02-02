@@ -38,4 +38,17 @@ jobs:
               --batch_size 1 --start_first \
               --auto_complete --timeout 600\
               /
+      - run:
+      name: "Build docker image and push to docker hub"
+      command: |
+        if [ "${CIRCLE_BRANCH}" == "master" ]; then
+          docker build -t lanjakorndev/example-nodejs-circle:latest .
+          docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE SHA1} .
+          docker push lanjakorndev/example-nodejs-circle:latest
+          docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
+        elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+          docker build -t lanjakorndev/example-nodejs-circle staging:latest .
+          docker push lanjakorndev/example-nodejs-circle_staging:latest
+        else echo "This is {CIRCLE_BRANCH}"
+        fi
       - run: echo Done
