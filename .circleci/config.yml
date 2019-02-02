@@ -19,36 +19,54 @@ jobs:
       # - run: npm test
       - setup_remote_docker
       - run: docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+      # - run:
+      #     name: Build and push docker images
+      #     command: |
+      #       cp Dockerfile.production Dockerfile
+      #       docker build -t lanjakorndev/example-nodejs-circle:latest .
+      #       docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1} .
+      #       docker push lanjakorndev/example-nodejs-circle:latest
+      #       docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
+      # - run:
+      #     command: |
+      #       docker run --rm -it \
+      #         -e CATTLE_ACCESS_KEY="$CATTLE_ACCESS_KEY" \
+      #         -e CATTLE_SECRET_KEY="$CATTLE_SECRET_KEY" \
+      #         -e CATTLE_URL="$CATTLE_URL" \
+      #         etlweather/gaucho upgrade $RANCHER_EXAMPLE_NODEJS \
+      #         --imageUuid 'docker:lanjakorndev/example-nodejs-circle:latest' \
+      #         --batch_size 1 --start_first \
+      #         --auto_complete --timeout 600\
+      #         /
       - run:
-          name: Build and push docker images
+          name: 'Build docker image and push to docker hub'
           command: |
-            cp Dockerfile.production Dockerfile
-            docker build -t lanjakorndev/example-nodejs-circle:latest .
-            docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1} .
-            docker push lanjakorndev/example-nodejs-circle:latest
-            docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
-      - run:
-          command: |
-            docker run --rm -it \
-              -e CATTLE_ACCESS_KEY="$CATTLE_ACCESS_KEY" \
-              -e CATTLE_SECRET_KEY="$CATTLE_SECRET_KEY" \
-              -e CATTLE_URL="$CATTLE_URL" \
-              etlweather/gaucho upgrade $RANCHER_EXAMPLE_NODEJS \
-              --imageUuid 'docker:lanjakorndev/example-nodejs-circle:latest' \
-              --batch_size 1 --start_first \
-              --auto_complete --timeout 600\
-              /
-      - run:
-      name: "Build docker image and push to docker hub"
-      command: |
-        if [ "${CIRCLE_BRANCH}" == "master" ]; then
-          docker build -t lanjakorndev/example-nodejs-circle:latest .
-          docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE SHA1} .
-          docker push lanjakorndev/example-nodejs-circle:latest
-          docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
-        elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
-          docker build -t lanjakorndev/example-nodejs-circle staging:latest .
-          docker push lanjakorndev/example-nodejs-circle_staging:latest
-        else echo "This is {CIRCLE_BRANCH}"
-        fi
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker build -t lanjakorndev/example-nodejs-circle:latest .
+              docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE SHA1} .
+              docker push lanjakorndev/example-nodejs-circle:latest
+              docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
+              docker run --rm -it \
+                -e CATTLE_ACCESS_KEY="$CATTLE_ACCESS_KEY" \
+                -e CATTLE_SECRET_KEY="$CATTLE_SECRET_KEY" \
+                -e CATTLE_URL="$CATTLE_URL" \
+                etlweather/gaucho upgrade $RANCHER_EXAMPLE_NODEJS \
+                --imageUuid 'docker:lanjakorndev/example-nodejs-circle:latest' \
+                --batch_size 1 --start_first \
+                --auto_complete --timeout 600\
+                /
+            elif [ "${CIRCLE_BRANCH}" == "staging" ]; then
+              docker build -t lanjakorndev/example-nodejs-circle staging:latest .
+              docker push lanjakorndev/example-nodejs-circle_staging:latest
+              docker run --rm -it \
+                -e CATTLE_ACCESS_KEY="$CATTLE_ACCESS_KEY" \
+                -e CATTLE_SECRET_KEY="$CATTLE_SECRET_KEY" \
+                -e CATTLE_URL="$CATTLE_URL" \
+                etlweather/gaucho upgrade $RANCHER_EXAMPLE_NODEJS \
+                --imageUuid 'docker:lanjakorndev/example-nodejs-circle:latest' \
+                --batch_size 1 --start_first \
+                --auto_complete --timeout 600\
+                /
+            else echo "This is {CIRCLE_BRANCH}"
+            fi
       - run: echo Done
