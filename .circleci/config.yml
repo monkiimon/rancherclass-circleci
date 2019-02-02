@@ -18,7 +18,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       # - run: npm test
       - setup_remote_docker
-      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      - run: docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
       - run:
           name: Build and push docker images
           command: cp Dockerfile.production Dockerfile
