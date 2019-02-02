@@ -25,7 +25,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               cp Dockerfile.production Dockerfile
               docker build -t lanjakorndev/example-nodejs-circle:latest .
-              docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE SHA1} .
+              docker build -t lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1} .
               docker push lanjakorndev/example-nodejs-circle:latest
               docker push lanjakorndev/example-nodejs-circle:${CIRCLE_SHA1}
               docker run --rm -it \
